@@ -1,0 +1,59 @@
+<html>
+<header>
+    <title>Server Sent Event</title>
+</header>
+
+<body>
+    <div>
+        <p id="message"></p>
+        <p> Alert : </p>
+        <div id="list">
+        </div>
+    </div>
+    <script type="text/javascript">
+        var message = document.getElementById('message');
+        var list = document.getElementById('list');
+        var source = new EventSource('/temp')
+        let count = 1;
+        source.onmessage = function (event) {
+            let temp = parseFloat(event.data.split('temp:')[1]);
+            message.innerText = "Current Reading " + temp;
+            // console.log("New message", event.data);            
+            if (!(102 < temp)) {
+                let msg = `Temperature is getting Low ${temp}, please correct`;                
+                let item = `<div class='' id='${count}'>
+                                <p class=''>${msg}</p>
+                                <button onclick='deleteTodo(${count})' class=''>Low Temp</button>
+                            </div>`;
+                count += 1;
+                list.innerHTML += item;
+                console.log(msg)
+            }
+            if (!(temp < 104)) {
+                let msg = `Temperature is getting High ${temp}, please correct`; 
+                let item = `<div class='' id='${count}'>
+                                <p class=''>${msg}</p>
+                                <button onclick='deleteTodo(${count})' class=''>High Temp</button>
+                            </div>`;
+                count += 1;
+                list.innerHTML += item;
+                console.log(msg)
+            }
+
+            if(count == 20){
+                list.innerHTML = '';
+                count = 0;
+            }
+        };
+        source.onerror = function (err) {
+            console.error("EventSource failed:", err);
+        }
+
+        function deleteTodo(id) {
+            var id = document.getElementById(id);
+            id.parentNode.removeChild(id);
+        }
+    </script>
+</body>
+
+</html>
