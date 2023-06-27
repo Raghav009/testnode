@@ -4,11 +4,12 @@
   "description": "learning expressjs",
   "main": "index.js",
   "scripts": {
-    "start": "node ./functions/api.js"  
+    "start": "node ./functions/api.js"
   },
   "author": "Raghava",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.4.0",
     "express": "^4.18.1",
     "netlify-cli": "^12.7.2",
     "netlify-lambda": "^2.0.15",

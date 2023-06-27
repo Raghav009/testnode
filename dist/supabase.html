@@ -1,0 +1,97 @@
+<html>
+<header>
+    <title>SupaBase</title>
+</header>
+<body>
+    <div>
+        <button onclick="complete()">Complete</button>
+    </div>
+    <script type="module">
+        const subUrl = 'https://cxsquvbkilwzouziiavx.supabase.co';
+        const subKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4c3F1dmJraWx3em91emlpYXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODc4MDU2MzcsImV4cCI6MjAwMzM4MTYzN30.fpw3IYaFfK1kqmc1KuqYYWZNiwVnDsPSESmAgbo6yUI';
+
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+        /*
+        while using in the React App adapt the changes as below
+        Reference : https://supabase.com/docs/reference/javascript/initializing
+        
+        npm install @supabase/supabase-js
+        
+        import { createClient } from '@supabase/supabase-js'
+
+        // Create a single supabase client for interacting with your database
+        const supabase = createClient('https://xyzcompany.supabase.co', 'public-anon-key')
+        */
+
+        /* 
+         Status 0 = Unresolved
+         Status 1 = Acknowledged
+         Status 2 = Escalated
+         Status 3 = Corrected
+         */
+        const supabase = createClient(subUrl, subKey);
+
+        getEvents().then(res => {
+            console.log(res)
+        });
+        getAuditlogs().then(res => {
+            console.log(res)
+        });
+
+        // updateStatus(2,10).then(res => {
+        //     console.log(res);
+        // })
+
+        async function getEvents() {
+            const { data, error } = await supabase.from('events').select().neq('status', 3);
+            return data;
+        }
+
+        async function getAuditlogs() {
+            const { data, error } = await supabase.from('auditlog').select().neq('completed', true);
+            // .eq('eventId', 'c8b2dc4e-8a29-43bb-a603-696a5ab126fa')
+            return data;
+        }
+        const _eventId = 'c8b2dc4e-8a29-43bb-a603-696a5ab126fa'; // Pick this Id from getEvents Results
+        async function updateStatus(status, sec) {
+
+            const _status = status; // Pick this based on the User Specific Case
+            const _sec = sec// Pick the seconds from the UI - that took for user action time
+            const _timestamp = new Date().toISOString();
+            // Update status in the events table               
+
+            const { error } = await supabase.from('events').update({ status: _status, updated_at: _timestamp }).eq('id', _eventId)
+
+            // Add new row in the auditlog table 
+
+            let log = {
+                'eventId': _eventId,
+                'status': _status,
+                'seconds': _sec,
+                'timestamp': _timestamp
+            }
+
+            const { errorAuditlog } = await supabase.from('auditlog').insert(log);
+
+            return { error, errorAuditlog };
+        }
+
+        async function updateAudit() {
+            updateStatus(3, 30).then(res => {
+                console.log(res);
+            })
+            const { data, errorUp } = await supabase.from('auditlog').update({ completed: true }).eq('eventId', _eventId);
+            return data;
+        }
+
+        function complete() {
+            updateAudit().then(res => { console.log(res) })
+        }
+
+        window.complete = complete;
+
+    </script>
+</body>
+
+</html>

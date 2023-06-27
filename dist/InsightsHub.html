@@ -9,9 +9,10 @@
 
 <body>
     <script type="text/javascript">
+        let GatewayURL = 'gateway.eu1.mindsphere.io';
         function _login() {
 
-            let GatewayURL = 'gateway.eu1.mindsphere.io';
+            
             let url = `https://${GatewayURL}/api/technicaltokenmanager/v3/oauth/token`
             let id = 'iiotqzna-brewery-v1.0.0';
             let secret = 'vZFm1C7j1Htb9JLJGmit0004VVU2dUvvemcmnlYEayX';
@@ -32,7 +33,9 @@
                     "Content-Type": "application/json",
                     "X-SPACE-AUTH-KEY": `Bearer ${base64token}`,
                     "Accept": "*/*",
-                    "Access-Control-Allow-Origin": '*'
+                    "Access-Control-Allow-Origin": 'http://localhost:3000',
+                    "User-Agent": 'Override',
+                    'mode':'no-cors'
                 },
                 body: JSON.stringify(data),
                 redirect: 'follow'
@@ -42,10 +45,10 @@
                     sessionStorage.setItem('session_id', JSON.stringify(res))
                 })
         }
-        login();
+        //login();
         function login() {
             var myHeaders = new Headers();
-            myHeaders.append("X-SPACE-AUTH-KEY", "Bearer {{base64token}}");
+            myHeaders.append("X-SPACE-AUTH-KEY", "Bearer {base64token}");
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
@@ -68,6 +71,19 @@
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
         }
+
+        function getEvents(){
+            let url = `https://${GatewayURL}/api/eventmanagement/v3/events`
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vaWlvdHF6bmEucGlhbS5ldTEubWluZHNwaGVyZS5pby90b2tlbl9rZXlzIiwia2lkIjoia2V5LWlkLTMiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJkY2MwNmU4NTgzOWI0ZTg4YTlhMmU5ZjdjM2M0YjdkZiIsInN1YiI6Imlpb3Rxem5hLWJyZXdlcnktdjEuMC4wNjYiLCJzY29wZSI6WyJpYW0tYWN0aW9uLmNsaWVudF9jcmVkZW50aWFscy51c2VyLWltcGVyc29uYXRpb24iLCJtZHNwOmNvcmU6QWRtaW4zcmRQYXJ0eVRlY2hVc2VyIl0sImNsaWVudF9pZCI6Imlpb3Rxem5hLWJyZXdlcnktdjEuMC4wNjYiLCJjaWQiOiJpaW90cXpuYS1icmV3ZXJ5LXYxLjAuMDY2IiwiYXpwIjoiaWlvdHF6bmEtYnJld2VyeS12MS4wLjA2NiIsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJyZXZfc2lnIjoiNzY2YWZiOGEiLCJpYXQiOjE2ODc3Njg2MzcsImV4cCI6MTY4Nzc3MDQzNywiaXNzIjoiaHR0cHM6Ly9paW90cXpuYS5waWFtLmV1MS5taW5kc3BoZXJlLmlvL29hdXRoL3Rva2VuIiwiemlkIjoiaWlvdHF6bmEiLCJhdWQiOlsiaWFtLWFjdGlvbi5jbGllbnRfY3JlZGVudGlhbHMiLCJpaW90cXpuYS1icmV3ZXJ5LXYxLjAuMDY2Il0sInRlbiI6Imlpb3Rxem5hIiwic2NoZW1hcyI6WyJ1cm46c2llbWVuczptaW5kc3BoZXJlOmlhbTp2MSJdLCJjYXQiOiJjbGllbnQtdG9rZW46djEifQ.aY9ETHg-vpDzZhh_Nrw0Ouviv3E8BpOvh_l4OcEvoqNuOIYK7XDhdwYythHx6mEbIhnlV9tCyhvjItkahaiCy305aKYDDH0t36N7ufSJbKB5bV_s0K1il1Fe0LNWAGy1xQzw60XbX7-yGeWPCY-PwvJ_OqaBfx2q6vX4bN6n6y6SFdkCwyJVoGZDpbgZSxGBoVsDQw_nvb5eoLxdGufmCGYRaAuASNlLiglB1yLaJOgoSrHfsorKSzG1-OxfmpfZs5eIlVBM0d7BvZFX1ON06-ifWVekBB0PMbG-PtnkSDpMtXS9nBFjT9wnoGx2QDvfnnFqECAS_qAtg0pkrd6qqQ`
+                },
+            })
+            .then(res => res.json())
+            .then(res => console.log(res));
+        }
+        getEvents();
     </script>
 </body>
 
